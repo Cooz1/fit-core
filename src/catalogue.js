@@ -22,7 +22,8 @@
  *
  * @param {{id:string, variantId?:number|string, sku?:string, price?:number}[]} accessories
  * @param {{id:string, variantId?:number|string, sku?:string, price?:number}[]} adapters
- * @returns {{ missing: object[], collisions: [string|number, object[]][] }}
+ * @typedef {{id:string, variantId?:number|string, sku?:string, price?:number}} CartableProduct
+ * @returns {{ missing: CartableProduct[], collisions: [string|number, CartableProduct[]][] }}
  */
 export function variantCollisions(accessories = [], adapters = []) {
   const all = [...new Map([...(accessories || []), ...(adapters || [])].map((a) => [a.id, a])).values()];
@@ -49,7 +50,7 @@ export function variantCollisions(accessories = [], adapters = []) {
  * @param {{id:string}[]} registry
  * @param {{id:string}[]} products
  * @param {{id:string}[]} exempt   not expected in both
- * @returns {{ onlyInStorefront: object[], onlyInRegistry: object[] }}
+ * @returns {{ onlyInStorefront: {id:string}[], onlyInRegistry: {id:string}[] }}
  */
 export function catalogueSplit(registry = [], products = [], exempt = []) {
   const skip = new Set((exempt || []).map((a) => a.id));

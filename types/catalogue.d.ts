@@ -1,3 +1,9 @@
+export type CartableProduct = {
+    id: string;
+    variantId?: number | string;
+    sku?: string;
+    price?: number;
+};
 /**
  * Products the cart cannot tell apart, or cannot name at all.
  *
@@ -12,7 +18,8 @@
  *
  * @param {{id:string, variantId?:number|string, sku?:string, price?:number}[]} accessories
  * @param {{id:string, variantId?:number|string, sku?:string, price?:number}[]} adapters
- * @returns {{ missing: object[], collisions: [string|number, object[]][] }}
+ * @typedef {{id:string, variantId?:number|string, sku?:string, price?:number}} CartableProduct
+ * @returns {{ missing: CartableProduct[], collisions: [string|number, CartableProduct[]][] }}
  */
 export declare function variantCollisions(accessories?: {
     id: string;
@@ -25,8 +32,8 @@ export declare function variantCollisions(accessories?: {
     sku?: string;
     price?: number;
 }[]): {
-    missing: object[];
-    collisions: [string | number, object[]][];
+    missing: CartableProduct[];
+    collisions: [string | number, CartableProduct[]][];
 };
 /**
  * Products that two parallel catalogue files disagree about the existence of.
@@ -41,7 +48,7 @@ export declare function variantCollisions(accessories?: {
  * @param {{id:string}[]} registry
  * @param {{id:string}[]} products
  * @param {{id:string}[]} exempt   not expected in both
- * @returns {{ onlyInStorefront: object[], onlyInRegistry: object[] }}
+ * @returns {{ onlyInStorefront: {id:string}[], onlyInRegistry: {id:string}[] }}
  */
 export declare function catalogueSplit(registry?: {
     id: string;
@@ -50,8 +57,12 @@ export declare function catalogueSplit(registry?: {
 }[], exempt?: {
     id: string;
 }[]): {
-    onlyInStorefront: object[];
-    onlyInRegistry: object[];
+    onlyInStorefront: {
+        id: string;
+    }[];
+    onlyInRegistry: {
+        id: string;
+    }[];
 };
 /**
  * Products whose normalize spec does not say which axis `realLength` describes.
