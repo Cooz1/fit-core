@@ -60,3 +60,21 @@ export function catalogueSplit(registry = [], products = [], exempt = []) {
     onlyInRegistry: [...reg.values()].filter((d) => !shop.has(d.id)),
   };
 }
+
+/**
+ * Products whose normalize spec does not say which axis `realLength` describes.
+ *
+ * Not a bug on its own — a rifle's longest axis IS its length, so every weapon config
+ * written before `scaleBy` existed is correct. It is a TRAP, and naming it is the point:
+ * the same silence scaled a plate carrier on its depth and read the cavity 30% too big, and
+ * the mannequin is right only because stature happens to be its longest axis. Anything worn
+ * must say. Anything long and thin may as well say too.
+ *
+ * @param {{id?:string, sku?:string, normalize?:{scaleBy?:string}}[]} products
+ * @returns {{id:string, sku?:string}[]} one entry per product relying on the implicit axis
+ */
+export function implicitScaleAxis(products = []) {
+  return (products || [])
+    .filter((p) => p && p.normalize && !p.normalize.scaleBy)
+    .map((p) => ({ id: p.id, sku: p.sku }));
+}

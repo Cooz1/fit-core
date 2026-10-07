@@ -16,11 +16,11 @@ from the calibration list, and the PMAG missing after them. **Import it. Do not 
 |---|---|
 | `records` | The `Transform` record — identity, clone, round — and the validators for a transform, a normalize spec and a material override. |
 | `transform` | Transform ↔ `THREE.Matrix4`, `composeMountAndOffset`, mount-relative read/write. The composition rule is `final = mount ∘ offset`, offset applied in the mount's local frame. |
-| `loader` | `loadGLB` with Draco, the GLB cache, and `normalizeModel` — orient forward/up, scale, centre. |
+| `loader` | `loadGLB` with Draco, the GLB cache, and `normalizeModel` — orient forward/up, scale, centre. `normalize.scaleBy` names which ORIENTED axis `realLength` describes (`x`/`y`/`z`/`longest`, axes named after orientation: forward is +x, up is +y, right is +z). Omitting it still means `longest`, because every weapon config predates the field and is correct on it — but the omission is recorded and `implicitScaleAxis()` reports it. Scaling on whichever axis happens to be longest has cost this project twice. |
 | `look` | `applyLook`, the studio environment, and the two tuned constants. The values in here are calibrated against the black-level table; do not change them casually. |
 | `instances` | Repeating one placed object along an axis (ring pairs, rail sections). |
 | `cart` | Handing a build to a storefront cart, with the platform fallbacks. |
-| `catalogue` | `variantCollisions` and `catalogueSplit` — two checks that are about product bookkeeping, not about rails. They return findings, not prose, so each app writes its own warning naming its own files. |
+| `catalogue` | `variantCollisions`, `catalogueSplit` and `implicitScaleAxis` — two checks that are about product bookkeeping, not about rails. They return findings, not prose, so each app writes its own warning naming its own files. |
 
 ## What is deliberately NOT in here
 

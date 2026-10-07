@@ -1,11 +1,16 @@
 {
   "name": "@tactical/fit-core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shared fit model for the weapon configurator and Loadout Engine: transform records, GLB loading and normalisation, look, instancing, cart, catalogue checks.",
   "type": "module",
   "license": "MIT",
-  "repository": { "type": "git", "url": "git+https://github.com/Cooz1/fit-core.git" },
-  "files": ["src"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cooz1/fit-core.git"
+  },
+  "files": [
+    "src"
+  ],
   "main": "./src/index.js",
   "exports": {
     ".": "./src/index.js",
@@ -17,6 +22,8 @@
     "./cart": "./src/cart.js",
     "./catalogue": "./src/catalogue.js"
   },
-  "peerDependencies": { "three": ">=0.160.0" },
+  "peerDependencies": {
+    "three": ">=0.160.0"
+  },
   "sideEffects": false
 }

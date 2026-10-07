@@ -23,7 +23,15 @@ const _cache = new Map();
 
 /**
  * @typedef {Object} NormalizeSpec
- * @property {number} realLength   target size (metres) for the model's LONGEST axis
+ * @property {number} realLength   target size (metres) for the axis named by `scaleBy`
+ * @property {'x'|'y'|'z'|'longest'} [scaleBy]  which ORIENTED axis realLength describes.
+ *   Axes are named AFTER orientation: forward is +x, up is +y, right is +z. Omitting this
+ *   means 'longest', which is what every config written before this field existed relies on
+ *   — correct for a rifle, where the longest axis IS the length, and wrong for anything worn.
+ *   That silence has cost this project twice: a plate carrier scaled on its DEPTH and read
+ *   30% too big, and the mannequin, which is only right on 'longest' by luck because stature
+ *   happens to be its longest axis. Absence is recorded and reported, not assumed harmless —
+ *   see implicitScaleAxisWarnings().
  * @property {string} [forward]    which RAW model axis is "forward" → mapped to +X (default '+x')
  * @property {string} [up]         which RAW model axis is "up"      → mapped to +Y (default '+y')
  */
@@ -66,6 +74,11 @@ function orientationQuat(forward = '+x', up = '+y') {
 export function normalizeModel(obj, spec) {
   if (!spec) return obj;
   const { realLength, forward = '+x', up = '+y' } = spec;
+  const scaleBy = spec.scaleBy || 'longest';
+  if (spec.scaleBy && !['x', 'y', 'z', 'longest'].includes(spec.scaleBy)) {
+    throw new Error(`normalize.scaleBy must be x, y, z or longest (got ${JSON.stringify(spec.scaleBy)}). `
+      + `Axes are named after orientation: forward is +x, up is +y, right is +z.`);
+  }
   const inner = obj;
 
   // 1. orient, then measure the oriented (unscaled) bounding box
@@ -77,9 +90,11 @@ export function normalizeModel(obj, spec) {
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
 
-  // 2. uniform scale so the longest axis hits realLength
-  const longest = Math.max(size.x, size.y, size.z) || 1;
-  const s = realLength ? realLength / longest : 1;
+  // 2. uniform scale so the NAMED axis hits realLength
+  const measured = scaleBy === 'longest'
+    ? (Math.max(size.x, size.y, size.z) || 1)
+    : (size[scaleBy] || 1);
+  const s = realLength ? realLength / measured : 1;
 
   // 3. bake scale + recentre onto the inner child. world = pos + s·R(v), and the
   //    oriented centre is `center`, so pos = -s·center puts the centre at origin.
@@ -89,7 +104,12 @@ export function normalizeModel(obj, spec) {
 
   const outer = new THREE.Group();
   outer.add(inner);
-  outer.userData.normalize = { realLength, forward, up, scale: s };
+  outer.userData.normalize = {
+    realLength, forward, up, scale: s, scaleBy,
+    // so a caller can tell "nobody said" from "someone said longest"
+    scaleByImplicit: !spec.scaleBy,
+    measuredMm: Number((measured * 1000).toFixed(3)),
+  };
   return outer;
 }
 
