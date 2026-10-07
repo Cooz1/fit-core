@@ -58,3 +58,10 @@ Every module here except `catalogue.js` was moved from
 `schema.js` by line range for the same reason. `catalogue.js` is the one rewrite: the logic is the
 same, but the warning prose moved back to the app, because a shared check must not tell a loadout
 author to go and edit `catalog-real.json`.
+
+## Types
+
+`types/` is generated from the JSDoc in `src/` (`npm run types`) and **committed**, because a git
+dependency is installed without a build step. Regenerate it in the same commit as any signature
+change — the types are not a second description of the API that can drift from the first, they are
+emitted from it.

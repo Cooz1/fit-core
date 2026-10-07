@@ -1,6 +1,6 @@
 {
   "name": "@tactical/fit-core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Shared fit model for the weapon configurator and Loadout Engine: transform records, GLB loading and normalisation, look, instancing, cart, catalogue checks.",
   "type": "module",
   "license": "MIT",
@@ -9,21 +9,54 @@
     "url": "git+https://github.com/Cooz1/fit-core.git"
   },
   "files": [
-    "src"
+    "src",
+    "types"
   ],
   "main": "./src/index.js",
   "exports": {
-    ".": "./src/index.js",
-    "./records": "./src/records.js",
-    "./transform": "./src/transform.js",
-    "./loader": "./src/loader.js",
-    "./look": "./src/look.js",
-    "./instances": "./src/instances.js",
-    "./cart": "./src/cart.js",
-    "./catalogue": "./src/catalogue.js"
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./records": {
+      "types": "./types/records.d.ts",
+      "default": "./src/records.js"
+    },
+    "./transform": {
+      "types": "./types/transform.d.ts",
+      "default": "./src/transform.js"
+    },
+    "./loader": {
+      "types": "./types/loader.d.ts",
+      "default": "./src/loader.js"
+    },
+    "./look": {
+      "types": "./types/look.d.ts",
+      "default": "./src/look.js"
+    },
+    "./instances": {
+      "types": "./types/instances.d.ts",
+      "default": "./src/instances.js"
+    },
+    "./cart": {
+      "types": "./types/cart.d.ts",
+      "default": "./src/cart.js"
+    },
+    "./catalogue": {
+      "types": "./types/catalogue.d.ts",
+      "default": "./src/catalogue.js"
+    }
   },
   "peerDependencies": {
     "three": ">=0.160.0"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "devDependencies": {
+    "@types/three": "^0.186.0",
+    "typescript": "^7.0.2"
+  },
+  "types": "./types/index.d.ts",
+  "scripts": {
+    "types": "tsc"
+  }
 }
