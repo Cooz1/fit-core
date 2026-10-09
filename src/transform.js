@@ -88,3 +88,18 @@ export function worldFromMountRelative(weaponObj, mount, offset) {
 }
 
 export { identityTransform };
+
+/**
+ * Do two Transform records describe the same placement?
+ *
+ * 1e-7 is the tolerance, which is 0.0001 mm at the scene's metre scale — far below
+ * anything a GLB or a gizmo can express, so this is an equality test with float
+ * slack, not a "close enough" test. Used both to keep no-op edits out of the undo
+ * stack and to decide an accessory never moved and should follow the disk mount.
+ */
+export function sameTransform(a, b) {
+  return !!a && !!b &&
+    a.position.every((n, i) => Math.abs(n - b.position[i]) < 1e-7) &&
+    a.rotation.every((n, i) => Math.abs(n - b.rotation[i]) < 1e-7) &&
+    a.scale.every((n, i) => Math.abs(n - b.scale[i]) < 1e-7);
+}

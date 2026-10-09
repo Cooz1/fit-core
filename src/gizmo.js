@@ -25,7 +25,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import * as THREE from 'three';
-import { readTransform, applyTransform } from './transform.js';
+import { readTransform, applyTransform, sameTransform } from './transform.js';
 
 /** @typedef {'translate'|'rotate'|'scale'} GizmoMode */
 /** @typedef {'local'|'world'} GizmoSpace */
@@ -129,11 +129,6 @@ export function scrubValue(startVal, dx, kind, { coarse = false, fine = false } 
 
 // ── history ───────────────────────────────────────────────────────────────────
 
-const sameT = (a, b) => !!a && !!b &&
-  a.position.every((n, i) => Math.abs(n - b.position[i]) < 1e-7) &&
-  a.rotation.every((n, i) => Math.abs(n - b.rotation[i]) < 1e-7) &&
-  a.scale.every((n, i) => Math.abs(n - b.scale[i]) < 1e-7);
-
 /**
  * Undo/redo over object transforms.
  *
@@ -148,11 +143,15 @@ const sameT = (a, b) => !!a && !!b &&
  */
 export class TransformHistory {
   /**
+   * `limit` is Infinity by default. A silently capped stack is a Ctrl+Z that
+   * stops working after a long session with nothing to say for itself; a caller
+   * that wants a cap can ask for one.
+   *
    * @param {{limit?:number, onChange?:(h:TransformHistory)=>void,
    *          apply?:(obj:import('three').Object3D, t:object)=>void,
    *          afterMutate?:(obj:import('three').Object3D, before:object)=>void}} [opts]
    */
-  constructor({ limit = 200, onChange = null, apply = null, afterMutate = null } = {}) {
+  constructor({ limit = Infinity, onChange = null, apply = null, afterMutate = null } = {}) {
     this.limit = limit;
     this.onChange = onChange;
     this._apply = apply || ((obj, t) => { applyTransform(obj, t); obj.updateMatrix(); });
@@ -174,7 +173,7 @@ export class TransformHistory {
    * @returns {boolean} whether it was recorded
    */
   record(object, before, after) {
-    if (sameT(before, after)) return false;
+    if (sameTransform(before, after)) return false;
     this.undoStack.push({ object, before, after });
     if (this.undoStack.length > this.limit) this.undoStack.shift();
     this.redoStack.length = 0;

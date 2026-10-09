@@ -98,6 +98,10 @@ export declare class TransformHistory {
         after: object;
     }[];
     /**
+     * `limit` is Infinity by default. A silently capped stack is a Ctrl+Z that
+     * stops working after a long session with nothing to say for itself; a caller
+     * that wants a cap can ask for one.
+     *
      * @param {{limit?:number, onChange?:(h:TransformHistory)=>void,
      *          apply?:(obj:import('three').Object3D, t:object)=>void,
      *          afterMutate?:(obj:import('three').Object3D, before:object)=>void}} [opts]
