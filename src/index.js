@@ -18,3 +18,4 @@ export * from './look.js';
 export * from './instances.js';
 export * from './cart.js';
 export * from './catalogue.js';
+export * from './gizmo.js';
