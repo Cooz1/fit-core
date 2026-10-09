@@ -251,11 +251,18 @@ export const GIZMO_SHORTCUTS = [
 ];
 
 /**
- * @typedef {{type:'undo'|'redo'|'space', preventDefault?:boolean}
- *         | {type:'mode', mode:GizmoMode}
- *         | {type:'axis', axis:GizmoAxis}
- *         | {type:'nudge', sign:1|-1, coarse:boolean, fine:boolean, preventDefault:true}
- *         | {type:'passthrough', key:string}} GizmoKeyAction
+ * preventDefault sits on the base rather than on the variants that use it: a caller
+ * writes `if (act.preventDefault) e.preventDefault()` once, before narrowing on
+ * `type`, and a typed caller should not have to narrow first to ask.
+ *
+ * @typedef {{preventDefault?: boolean}} GizmoActionBase
+ * @typedef {GizmoActionBase & (
+ *             {type:'undo'|'redo'|'space'}
+ *           | {type:'mode', mode:GizmoMode}
+ *           | {type:'axis', axis:GizmoAxis}
+ *           | {type:'nudge', sign:1|-1, coarse:boolean, fine:boolean}
+ *           | {type:'passthrough', key:string}
+ *         )} GizmoKeyAction
  */
 
 /**
@@ -302,5 +309,9 @@ export function gizmoKeyAction(e) {
   return { type: 'passthrough', key: k };
 }
 
-/** The other space. Spelled out so neither app re-types the ternary. */
+/**
+ * The other space. Spelled out so neither app re-types the ternary.
+ * @param {GizmoSpace} space
+ * @returns {GizmoSpace}
+ */
 export const otherSpace = (space) => (space === 'local' ? 'world' : 'local');

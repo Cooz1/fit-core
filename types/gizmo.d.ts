@@ -151,9 +151,11 @@ export declare function carryDelta(object: any, prevPosition: any, rider: any): 
  * @type {[string, string][]}
  */
 export declare const GIZMO_SHORTCUTS: [string, string][];
-export type GizmoKeyAction = {
-    type: 'undo' | 'redo' | 'space';
+export type GizmoActionBase = {
     preventDefault?: boolean;
+};
+export type GizmoKeyAction = GizmoActionBase & ({
+    type: 'undo' | 'redo' | 'space';
 } | {
     type: 'mode';
     mode: GizmoMode;
@@ -165,17 +167,23 @@ export type GizmoKeyAction = {
     sign: 1 | -1;
     coarse: boolean;
     fine: boolean;
-    preventDefault: true;
 } | {
     type: 'passthrough';
     key: string;
-};
+});
 /**
- * @typedef {{type:'undo'|'redo'|'space', preventDefault?:boolean}
- *         | {type:'mode', mode:GizmoMode}
- *         | {type:'axis', axis:GizmoAxis}
- *         | {type:'nudge', sign:1|-1, coarse:boolean, fine:boolean, preventDefault:true}
- *         | {type:'passthrough', key:string}} GizmoKeyAction
+ * preventDefault sits on the base rather than on the variants that use it: a caller
+ * writes `if (act.preventDefault) e.preventDefault()` once, before narrowing on
+ * `type`, and a typed caller should not have to narrow first to ask.
+ *
+ * @typedef {{preventDefault?: boolean}} GizmoActionBase
+ * @typedef {GizmoActionBase & (
+ *             {type:'undo'|'redo'|'space'}
+ *           | {type:'mode', mode:GizmoMode}
+ *           | {type:'axis', axis:GizmoAxis}
+ *           | {type:'nudge', sign:1|-1, coarse:boolean, fine:boolean}
+ *           | {type:'passthrough', key:string}
+ *         )} GizmoKeyAction
  */
 /**
  * Map a keydown to a gizmo action.
@@ -191,5 +199,9 @@ export type GizmoKeyAction = {
  * @returns {GizmoKeyAction|null}
  */
 export declare function gizmoKeyAction(e: KeyboardEvent): GizmoKeyAction | null;
-/** The other space. Spelled out so neither app re-types the ternary. */
-export declare const otherSpace: (space: any) => "local" | "world";
+/**
+ * The other space. Spelled out so neither app re-types the ternary.
+ * @param {GizmoSpace} space
+ * @returns {GizmoSpace}
+ */
+export declare const otherSpace: (space: GizmoSpace) => GizmoSpace;
