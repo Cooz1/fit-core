@@ -41,6 +41,27 @@ a version change shows up as a diff in `package.json`.
 `three` is a **peer dependency**. Supply one copy from the consuming app; two copies of three in a
 bundle break `instanceof` across the boundary and add ~600 kB.
 
+## After bumping this package
+
+**Clear the consumer's bundler cache.** A dev server that was already running pre-bundles this
+package and will keep serving the OLD copy after a version bump — including exports that no longer
+exist, or new ones that do not yet. It does not re-optimise just because `package.json` changed.
+
+```bash
+rm -rf node_modules/.vite     # Vite  (weapon-configurator)
+rm -rf .next                  # Next  (tactical-loadout)
+```
+
+This has already cost a debugging session: the weapon configurator's viewer and calibration pages
+both threw `does not provide an export named 'implicitScaleAxis'` for a function that was plainly
+present in the installed package, because a Vite server up since before the v0.2.0 bump was still
+serving its old pre-bundle.
+
+One caveat on the Next side: deleting `.next` also deletes Turbopack's downloaded `next/font/google`
+files, and in Next 16.2.4 it cannot always re-fetch them — every route then 500s with "next/font/google
+queries have exactly one entry". tactical-loadout now serves its fonts from the repo with
+`next/font/local` precisely so that clearing the cache is safe.
+
 ## Working on it locally
 
 ```bash

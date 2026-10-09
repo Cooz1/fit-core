@@ -1,6 +1,6 @@
 {
   "name": "@tactical/fit-core",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Shared fit model for the weapon configurator and Loadout Engine: transform records, GLB loading and normalisation, look, instancing, cart, catalogue checks.",
   "type": "module",
   "license": "MIT",

@@ -73,10 +73,24 @@ export declare function catalogueSplit(registry?: {
  * the mannequin is right only because stature happens to be its longest axis. Anything worn
  * must say. Anything long and thin may as well say too.
  *
+ * Collapsed by id first, for the same reason variantCollisions does it: a sellable adapter
+ * appears in BOTH lists — itself, and the product copy projected from it — so an app that
+ * passes its already-projected catalogue plus its adapters counts those twice. That is not
+ * hypothetical; the weapon viewer reported 24 products with five ids repeated where
+ * calibration, which passes unprojected lists, correctly reported 19. A warning whose only
+ * value is being trusted cannot afford a wrong number in it.
+ *
  * @param {{id?:string, sku?:string, normalize?:{scaleBy?:string}}[]} products
+ * @param {{id?:string, sku?:string, normalize?:{scaleBy?:string}}[]} [adapters]
  * @returns {{id:string, sku?:string}[]} one entry per product relying on the implicit axis
  */
 export declare function implicitScaleAxis(products?: {
+    id?: string;
+    sku?: string;
+    normalize?: {
+        scaleBy?: string;
+    };
+}[], adapters?: {
     id?: string;
     sku?: string;
     normalize?: {
